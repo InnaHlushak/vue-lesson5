@@ -35,6 +35,9 @@
                     <router-link to="/profile-user">
                         <v-btn  color="orange">Profile </v-btn>
                     </router-link>
+                    <router-link to="/admin-panel">
+                        <v-btn  color="yellow">Admin </v-btn>
+                    </router-link>
                 </v-col>
             </v-row>    
         </v-container>

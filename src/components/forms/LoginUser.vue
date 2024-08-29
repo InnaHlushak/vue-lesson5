@@ -72,11 +72,13 @@ export default {
         async login() {
             this.validateForm();
             if (this.isValidForm) {
-                //при виході користувача здійнюється вигрузка  даного користувача із системи Firebase, якщо він там є,
+                //при виході користувача здійнюється вигрузка користувача із системи Firebase, якщо він там є
                 if (this.isLoggedIn) {
                     try {
                         await signOut(auth);
-                        this.isLoggedIn = false;
+                        this.isLoggedIn = false; 
+                        //видалити accessToken користувача з LocalStorage
+                        localStorage.removeItem('accessToken');                       
                         alert("You are out");
                     } catch(error) {
                         alert('Sorry! Error');
@@ -88,6 +90,8 @@ export default {
                         const user = userCredential.user;
                         console.log(auth.currentUser);
                         this.isLoggedIn = true;
+                        //зберегти accessToken користувача в LocalStorage
+                        localStorage.setItem('accessToken',JSON.stringify(auth.currentUser.accessToken));
                         alert('Login successfully');
                     })
                     .catch((error) => {
@@ -95,13 +99,18 @@ export default {
                         const errorMessage = error.message;
                         console.log(errorCode, errorMessage);
                         alert('This user is not registered');
+                        this.redirectToSignUpUser();
                     })
                 }
             }
+        },
+        redirectToSignUpUser() {
+            this.$router.push({path: '/sign-up-user'});
         }    
-    } ,
+    },
     mounted() {
-        if (auth.currentUser) {
+        // if (auth.currentUser) {
+        if (!!localStorage.getItem('accessToken')) {
             this.isLoggedIn = true;
         }
     } 

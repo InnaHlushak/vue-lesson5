@@ -9,7 +9,8 @@ import ItemDescription from "@/components/ItemDescription.vue";
 import SignUpUser from "@/components/forms/SignUpUser.vue";
 import LoginUser from "@/components/forms/LoginUser.vue";
 import ProfileUser from "@/components/forms/ProfileUser.vue";
-
+import AdminPanes from "@/components/forms/AdminPanel.vue";
+import AdminPanel from "@/components/forms/AdminPanel.vue";
 
 // 2. Визначення деяких маршрутів
 // Кожен маршрут має бути прив'язаний до компонента.
@@ -74,6 +75,20 @@ const routes = [
         path: '/profile-user',
         name: 'profile-user',
         component: ProfileUser, 
+        //маршрут вимагає авторизації
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/admin-panel',
+        name: 'admin-panel',
+        component: AdminPanel, 
+        //маршрут вимагає авторизації та ролі admin
+        meta: {
+            requiresAuth: true,
+            role: 'admin',
+        }
     },
 ]
 
@@ -82,6 +97,58 @@ const router = createRouter({
     // 4. Реалізація історії для подальшого використання. 
     history: createWebHistory(),
     routes, // скорочено від `routes: routes`
-  })
+  });
+
+//5. Додавання глобального Navigation Guard
+//для захисту маршрутів від  неавторизованих користувачів 
+/*
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = !!localStorage.getItem('accessToken');
+    //Якщо маршрут вимагає авторизації
+    if (to.meta.requiresAuth) {
+        //Перевірити чи користувач пройшов авторизацію
+        if(!isAuthenticated) {
+            next('/login-user'); //Перенаправити  на сторінку Login
+        } else  {
+            next(); //Допустити до маршруту (бо користувач авторизований)
+        }
+    } else {
+        next(); //Допустити до маршруту (бо він не вимагає авторизації)
+    } 
+  });
+*/
+
+//для захисту маршрутів від   неавторизованих користувачів,  
+//включаючи  перевірку на роль
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = !!localStorage.getItem('accessToken');
+    // const userRole = localStorage.getItem('userRole');
+    const userRole = 'admin';
+    //const userRole = 'user';
+    //Якщо маршрут вимагає авторизації
+    if (to.meta.requiresAuth) {
+        //Перевірити чи користувач пройшов авторизацію
+        if(!isAuthenticated) {
+            next('/login-user'); //Перенаправити  на сторінку Login
+        } else  {
+            //Якщо маршрут вимагає перевірки ролі
+            const requiredRole = to.meta.role;
+            if (requiredRole && userRole !== requiredRole) {
+                next('/'); //Перенаправити на домашню сторінку (бо не відповідає ролі)
+            } else {
+                next(); //Допустити до маршруту (бо відповідає ролі)
+            }
+        }
+    } else {
+        next(); //Допустити до маршруту (бо він не вимагає авторизації)
+    } 
+  });
+
+//хук виконує додаткову дію після переходу
+//а саме, логування інформації про навігацію
+router.afterEach((to,from) => {
+    console.log(`Navigation to ${to.fullPath} from ${from.fullPath}`);
+});
 
   export default router;
+

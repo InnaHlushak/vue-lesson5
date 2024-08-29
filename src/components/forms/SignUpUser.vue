@@ -1,33 +1,35 @@
 <template>
-    <div class="container" >
+    <div  class="container" >
         <h3> Sign Up  </h3>
-        <p>Please register by entering the following information:</p>
         <v-sheet class="mx-auto" width="400" color="black">
             <v-form @submit.prevent = "register">
+                <div v-if="!isRegistered">
+                    <p>Please register by entering the following information:</p>
 
-                <v-text-field
-                    v-model="forma.email"
-                    placeholder="text@text.text"
-                    label="E-mail"
-                ></v-text-field>
-                <span class="error">{{ errorEmail }}</span>
+                    <v-text-field
+                        v-model="forma.email"
+                        placeholder="text@text.text"
+                        label="E-mail"
+                    ></v-text-field>
+                    <span class="error">{{ errorEmail }}</span>
 
-                <v-text-field
-                    v-model="forma.password"                     
-                    :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="showpass ? 'text' : 'password'"
-                    @click:append="showpass = !showpass"
-                    label="Password"
-                ></v-text-field>
-                <span class="error">{{ errorPassword }}</span>                
+                    <v-text-field
+                        v-model="forma.password"                     
+                        :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showpass ? 'text' : 'password'"
+                        @click:append="showpass = !showpass"
+                        label="Password"
+                    ></v-text-field>
+                    <span class="error">{{ errorPassword }}</span>                
 
-                <div>
-                    <input type="checkbox" id="checkbox" v-model="forma.checked" />
-                    <label for="checkbox">I confirm that all data is correct</label>
-                </div> 
-                <span class="error">{{ errorChecked }}</span>
-
-                <v-btn class="mt-2" :class="{gosubmit: isValidForm}" type="submit" block> {{ textSubmitButton }} </v-btn>
+                    <div>
+                        <input type="checkbox" id="checkbox" v-model="forma.checked" />
+                        <label for="checkbox">I confirm that all data is correct</label>
+                    </div> 
+                    <span class="error">{{ errorChecked }}</span>
+                </div>
+                <v-btn v-if="isRegistered" class="mt-2 issubmit" type="submit" block>You are already registered</v-btn>
+                <v-btn v-else class="mt-2" :class="{issubmit: isValidForm}" type="submit" block>Sign Up</v-btn>
             </v-form>
         </v-sheet>
     </div>
@@ -53,7 +55,7 @@ export default {
             showpass: false,
             errorChecked: '',
             isValidForm: false,
-            textSubmitButton: 'Sign up',
+            isRegistered: false,
         }
     },
     methods: {
@@ -78,7 +80,7 @@ export default {
                 return;
             } else {
                 this.isValidForm = true;
-                this.textSubmitButton = "Registered";
+                this.textSubmitButton = "Sign in";
                 alert('Data saved and sent'); 
             }
         },
@@ -91,6 +93,8 @@ export default {
                 .then((userCredential) => {
                     const user = userCredential.user;
                     console.log(auth.currentUser);
+                    // this.isRegistered = true;
+                    this.redirectToLogin();
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -98,8 +102,16 @@ export default {
                     console.log(errorCode, errorMessage);
                 })
             }    
-        }
+        },
+        redirectToLogin() {
+            this.$router.push({path: '/login-user'});
+        }, 
     } ,
+    mounted() {
+        if (auth.currentUser) {
+            this.isRegistered = true;
+        }
+    } 
 }
 </script>
 
@@ -108,8 +120,8 @@ export default {
         color:red;
     }
     
-    .gosubmit {
-        background-color: rgba(0, 128, 0, 0.509);
+    .issubmit {
+        background-color: green;
         cursor: not-allowed;
         pointer-events: none;
     }     
