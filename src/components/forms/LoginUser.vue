@@ -3,7 +3,7 @@
         <h3>Login</h3>
         <v-sheet class="mx-auto" width="400" color="black">
             <p v-if="!isLoggedIn">Enter the following information to confirm your login:</p>
-            <v-form @submit.prevent = "login">
+            <v-form @submit.prevent="submit">
                 <div v-if="!isLoggedIn">
                     <v-text-field
                         v-model="forma.email"
@@ -14,9 +14,9 @@
 
                     <v-text-field
                         v-model="forma.password"                     
-                        :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
-                        :type="showpass ? 'text' : 'password'"
-                        @click:append="showpass = !showpass"
+                        :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPass ? 'text' : 'password'"
+                        @click:append="showPass = !showPass"
                         label="Password"
                     ></v-text-field>
                     <span class="error">{{ errorPassword }}</span>                
@@ -44,7 +44,7 @@ export default {
             },
             errorEmail: '',
             errorPassword: '',
-            showpass: false,
+            showPass: false,
             isValidForm: false,
             isLoggedIn: false,
         }
@@ -67,25 +67,13 @@ export default {
 
             this.isValidForm = true;           
         },
-        //повернення користувача збереженого в  Firebase Authentication
-        //в https://console.firebase.google.com/project/study-project-43b9b/authentication/users
+        //вхід користувача
         async login() {
             this.validateForm();
             if (this.isValidForm) {
-                //при виході користувача здійнюється вигрузка користувача із системи Firebase, якщо він там є
-                if (this.isLoggedIn) {
-                    try {
-                        await signOut(auth);
-                        this.isLoggedIn = false; 
-                        //видалити accessToken користувача з LocalStorage
-                        localStorage.removeItem('accessToken');                       
-                        alert("You are out");
-                    } catch(error) {
-                        alert('Sorry! Error');
-                    }    
-                } else {
-                //вхід користувача
-                    signInWithEmailAndPassword(auth, this.forma.email, this.forma.password)
+                //повернення користувача збереженого в  Firebase Authentication
+                //в https://console.firebase.google.com/project/study-project-43b9b/authentication/users
+                signInWithEmailAndPassword(auth, this.forma.email, this.forma.password)
                     .then((userCredential) => {
                         const user = userCredential.user;
                         console.log(auth.currentUser);
@@ -101,15 +89,36 @@ export default {
                         alert('This user is not registered');
                         this.redirectToSignUpUser();
                     })
-                }
             }
         },
+        //вихід користувача
+        async logOut() {
+            //при виході здійнюється вигрузка користувача із системи Firebase, якщо він там є
+            if (this.isLoggedIn) {
+                try {
+                    await signOut(auth);
+                    this.isLoggedIn = false; 
+                    //видалити accessToken користувача з LocalStorage
+                    localStorage.removeItem('accessToken');                       
+                    alert("You are out");
+                } catch(error) {
+                    alert('Sorry! Error');
+                } 
+            }   
+        },
+         //перенаправлення на сторінку реєстрації
         redirectToSignUpUser() {
             this.$router.push({path: '/sign-up-user'});
-        }    
-    },
+        },
+        submit() {
+            if (this.isLoggedIn) {
+                this.logOut();
+            } else {
+                this.login();
+            }
+        },
+    },    
     mounted() {
-        // if (auth.currentUser) {
         if (!!localStorage.getItem('accessToken')) {
             this.isLoggedIn = true;
         }

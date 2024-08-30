@@ -26,16 +26,16 @@
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col>
-                    <router-link :to="{name: 'sign-up-user'}">
-                        <v-btn  color="orange">Sign up </v-btn>
+                    <router-link :to="{name:'sign-up-user'}">
+                        <v-btn  color="orange" class="navigation-btn">Sign up </v-btn>
                     </router-link>
                     <router-link to="/login-user">
-                        <v-btn  color="orange">Login </v-btn>
+                        <v-btn  color="orange" class="navigation-btn">Login </v-btn>
                     </router-link>
                     <router-link to="/profile-user">
-                        <v-btn  color="orange">Profile </v-btn>
+                        <v-btn  color="orange" class="navigation-btn">Profile </v-btn>
                     </router-link>
-                    <router-link to="/admin-panel">
+                    <router-link to="/admin-panel" class="navigation-btn">
                         <v-btn  color="yellow">Admin </v-btn>
                     </router-link>
                 </v-col>
@@ -46,13 +46,8 @@
 </template>
 
 <script>
-    import Hello from '@/components/Hello.vue';
-
     export default {
         name: 'App',
-        components: {
-            Hello,
-        }
     }
 </script>
 
@@ -67,5 +62,7 @@
     .wrapper h1{
         color: green;
     }
-
+    .navigation-btn {
+        margin: 2px;
+    }
 </style>

@@ -9,7 +9,6 @@ import ItemDescription from "@/components/ItemDescription.vue";
 import SignUpUser from "@/components/forms/SignUpUser.vue";
 import LoginUser from "@/components/forms/LoginUser.vue";
 import ProfileUser from "@/components/forms/ProfileUser.vue";
-import AdminPanes from "@/components/forms/AdminPanel.vue";
 import AdminPanel from "@/components/forms/AdminPanel.vue";
 
 // 2. Визначення деяких маршрутів
@@ -150,5 +149,5 @@ router.afterEach((to,from) => {
     console.log(`Navigation to ${to.fullPath} from ${from.fullPath}`);
 });
 
-  export default router;
+export default router;
 

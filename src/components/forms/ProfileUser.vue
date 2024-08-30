@@ -12,9 +12,9 @@
 
                 <v-text-field
                     v-model="forma.password"                     
-                    :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="showpass ? 'text' : 'password'"
-                    @click:append="showpass = !showpass"
+                    :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="showPass ? 'text' : 'password'"
+                    @click:append="showPass = !showPass"
                     label="Password"
                 ></v-text-field>
                 <span class="error">{{ errorPassword }}</span>
@@ -81,7 +81,7 @@ export default {
             },
             errorEmail: '',
             errorPassword: '',
-            showpass: false,
+            showPass: false,
             errorFirstName: '',                
             errorLastName: '',
             errorChecked: '',

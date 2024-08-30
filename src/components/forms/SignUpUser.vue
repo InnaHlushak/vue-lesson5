@@ -2,7 +2,7 @@
     <div  class="container" >
         <h3> Sign Up  </h3>
         <v-sheet class="mx-auto" width="400" color="black">
-            <v-form @submit.prevent = "register">
+            <v-form @submit.prevent="register">
                 <div v-if="!isRegistered">
                     <p>Please register by entering the following information:</p>
 
@@ -15,9 +15,9 @@
 
                     <v-text-field
                         v-model="forma.password"                     
-                        :append-icon="showpass ? 'mdi-eye' : 'mdi-eye-off'"
-                        :type="showpass ? 'text' : 'password'"
-                        @click:append="showpass = !showpass"
+                        :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showPass ? 'text' : 'password'"
+                        @click:append="showPass = !showPass"
                         label="Password"
                     ></v-text-field>
                     <span class="error">{{ errorPassword }}</span>                
@@ -52,7 +52,7 @@ export default {
             },
             errorEmail: '',
             errorPassword: '',
-            showpass: false,
+            showPass: false,
             errorChecked: '',
             isValidForm: false,
             isRegistered: false,
@@ -86,7 +86,7 @@ export default {
         },
         //реєстрація користувача з використанням Firebase Authentication
         //в https://console.firebase.google.com/project/study-project-43b9b/authentication/users
-        register() {
+        async register() {
             this.validateForm();
             if(this.isValidForm) {
                 createUserWithEmailAndPassword(auth, this.forma.email, this.forma.password)
